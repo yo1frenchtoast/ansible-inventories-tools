@@ -82,7 +82,7 @@ then
     else
         echo -e "*Create '$host' host_vars file*"
         echo "# created by addAnsibleNewHost.sh" > /etc/ansible/inventories/host_vars/$host
-        echo "ansible_host: $host" >> /etc/ansible/inventories/host_vars/$host
+        echo "ansible_host: $ip" >> /etc/ansible/inventories/host_vars/$host
     fi
 
     echo -e "*Check for user '$user' and port '$port' in '$group' group_vars*"
