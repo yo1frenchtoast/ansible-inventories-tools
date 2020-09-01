@@ -13,6 +13,7 @@ do
         unset user
         unset ip
         unset port
+        unset option
 
         if [[ ! $line =~ :children && $line =~ ^\[(.*)\] ]]
         then
@@ -67,19 +68,38 @@ do
     	                    port=22
     	                fi
                     fi
+
+                    if [[ $param =~ ansible_ssh_common_arg:\ \"-o\ (.*)\" ]]
+                    then
+                        option=${BASH_REMATCH[1]}
+                    fi
+
                 done < /etc/ansible/inventories/host_vars/$host
 
                 if [[ $1 == "alias" ]]
                 then
                     echo "alias $host='ssh $user@$ip -p $port'"
                 else
-                    CONFIG=$(cat <<EOF
+                    unset CONFIG
+                    if [[ ! $option ]]
+                    then
+                        CONFIG=$(cat <<EOF
 Host $host
     User $user
     HostName $ip
     Port $port
 EOF
-                    )
+                        )
+                    else
+                        CONFIG=$(cat <<EOF
+Host $host
+    User $user
+    HostName $ip
+    Port $port
+    $option
+EOF
+                        )
+                    fi
                     echo "$CONFIG"
                 fi
             fi
